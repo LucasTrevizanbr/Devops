@@ -1,0 +1,29 @@
+version: "3"
+services: 
+    db:
+      image: mysql
+      container_name: banco_mysql
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+      ports:
+        - 9090:3306
+      volumes:
+        - todo_data:/var/lib/mysql
+    
+    todo-app:
+      build:
+        context: ./todo
+        dockerfile: ./Dockerfile
+      image: todo_api
+      ports:
+        - 8080:8080
+      environment:
+        - DB_URL_BUILD=jdbc:mysql://banco_mysql:9090/todo?createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=America/Sao_Paulo
+      links:
+        - db
+      depends_on:
+        - db
+      
+volumes:
+  todo_data:
+      
